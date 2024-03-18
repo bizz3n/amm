@@ -6,6 +6,7 @@ const tokens = (n) => {
 }
 
 const ether = tokens
+const shares = ether
 
 describe('AMM', () => {
   let accounts, 
@@ -218,11 +219,11 @@ describe('AMM', () => {
       console.log(`Investor1 Token2 balance before swap: ${ethers.utils.formatEther(balance)}`)
 
       // Estimate amount of tokens investor1 will receive after swapping token1: include slippage
-      estimate = await amm.calculateToken1Swap(tokens(10000))
+      estimate = await amm.calculateToken1Swap(tokens(100))
       console.log(`Token2 amount investor1 will receive after swap: ${ethers.utils.formatEther(estimate)}`)
 
       // Investor1 swaps 1 token1
-      transaction = await amm.connect(investor1).swapToken1(tokens(10000))
+      transaction = await amm.connect(investor1).swapToken1(tokens(100))
       result = await transaction.wait()
 
       balance = await token2.balanceOf(investor1.address)
@@ -240,7 +241,7 @@ describe('AMM', () => {
       //
 
       // Investor2 approves all tokens
-      transaction = await token2.connect(investor2).approve(amm.address, tokens(10000))
+      transaction = await token2.connect(investor2).approve(amm.address, tokens(100000))
       await transaction.wait()
 
       // Check investor2 balance before swap
@@ -275,8 +276,44 @@ describe('AMM', () => {
       // Check price after swapping
       console.log(`Price: ${await amm.token2Balance() / await amm.token1Balance()} \n`)
 
+      /////////////////////////////////////////////////
+      // Removing Liquidity
+      //
+
+      console.log(`AMM Token1 Balance: ${ethers.utils.formatEther(await amm.token1Balance())} \n`)
+      console.log(`AMM Token2 Balance: ${ethers.utils.formatEther(await amm.token2Balance())} \n`)
 
 
+      // Check LP balance before removing tokens
+      balance = await token1.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token1 balance before removing funds: ${ethers.utils.formatEther(balance)} \n` )
+
+      balance = await token2.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token2 balance before removing funds: ${ethers.utils.formatEther(balance)} \n` )
+
+
+      // LP removes tokens from AMM Pool
+      transaction = await amm.connect(liquidityProvider).removeLiquidity(shares(50)) // 50 Shares
+      await transaction.wait()
+
+
+      // Check LP balance after removing funds
+      balance = await token1.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token1 balance after removing fund: ${ethers.utils.formatEther(balance)} \n`)
+
+      balance = await token2.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token1 balance after removing fund: ${ethers.utils.formatEther(balance)} \n`)
+
+      // LP should have 0 shares
+      expect(await amm.shares(liquidityProvider.address)).to.equal(0)
+
+      // Deploher should have 100 shares
+      expect(await amm.shares(deployer.address)).to.equal(shares(100))
+
+      // AMM Pool has 100 total shares
+      expect(await amm.totalShares()).to.equal(shares(100))
+
+      
     })
 
 
