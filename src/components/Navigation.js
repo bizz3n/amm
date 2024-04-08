@@ -15,7 +15,7 @@ const Navigation = () => {
   const account = useSelector(state => state.provider.account)
   const tokens = useSelector(state => state.tokens.contracts)
   const amm = useSelector(state => state.amm.contract)
-
+  console.log("AMM_Nav", amm)
   const dispatch = useDispatch()
 
   const connectHandler = async () => {
@@ -75,10 +75,6 @@ const Navigation = () => {
         )}
 
         </div>
-
-
-
-
 
       </Navbar.Collapse>
     </Navbar>
