@@ -30,8 +30,7 @@ const Deposit = () => {
 	const amm = useSelector(state => state.amm.contract)
 	const isDepositing = useSelector(state => state.amm.depositing.isDepositing)
 	const isSuccess = useSelector(state => state.amm.depositing.isSuccess)
-	const transactionHash = useSelector(state => state.amm.depositing.tra)
-
+	const transactionHash = useSelector(state => state.amm.depositing.transactionHash)
 	const dispatch = useDispatch()
 
 	const amountHandler = async (e) => {
@@ -173,3 +172,5 @@ const Deposit = () => {
 }
 
 export default Deposit;
+
+
