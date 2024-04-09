@@ -14,7 +14,8 @@ import Alert from './Alert'
 
 import { 
 	swap, 
- 	loadBalances
+ 	loadBalances,
+ 	addLiquidity
  } from '../store/interactions'
 
 const Swap = () => {
@@ -39,7 +40,7 @@ const Swap = () => {
 	const amm = useSelector(state => state.amm.contract)
 	const isSwapping = useSelector(state => state.amm.swapping.isSwapping)
 	const isSuccess = useSelector(state => state.amm.swapping.isSuccess)
-	const transactionHash = useSelector(state => state.amm.swapping.transactionHash)
+	const transactionHash = useSelector(state => state.amm.swapping.tra)
 
 	const dispatch = useDispatch()
 
